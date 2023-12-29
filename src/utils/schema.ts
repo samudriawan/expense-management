@@ -9,6 +9,8 @@ export const expenseSchema = z.object({
 		.max(50)
 		.trim(),
 	category: z.string(),
+	merchant: z.string().nullish(),
+	payment: z.string().nullish(),
 	createdAt: z.string().datetime(),
 	amount: z.number().positive().int(),
 	note: z.string().nullish(),

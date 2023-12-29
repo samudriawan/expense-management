@@ -100,7 +100,15 @@ export default function ExpenseForm({
 						className="form-input"
 					/>
 				</div>
-				<div className="flex flex-col ">
+				<div className="flex flex-col gap-2">
+					<div className="flex justify-between">
+						<label htmlFor="expenseCategory">Select Category</label>
+						{errors.category?.message && (
+							<span className=" text-red-500 italic">
+								{errors.category.message}
+							</span>
+						)}
+					</div>
 					<select
 						{...register('category')}
 						id="expenseCategory"
@@ -153,6 +161,24 @@ export default function ExpenseForm({
 
 				<div className="flex flex-col gap-1">
 					<div className="flex justify-between">
+						<label htmlFor="expenseAmount">Merchant</label>
+						{errors.merchant?.message && (
+							<span className="text-red-500 italic">
+								{errors.merchant.message}
+							</span>
+						)}
+					</div>
+					<input
+						type="text"
+						{...register('merchant')}
+						id="expenseMerchant"
+						placeholder="Type to add merchant"
+						className="form-input"
+					/>
+				</div>
+
+				<div className="flex flex-col gap-1">
+					<div className="flex justify-between">
 						<label htmlFor="expenseAmount">Amount</label>
 						{errors.amount?.message && (
 							<span className="text-red-500 italic">
@@ -167,17 +193,35 @@ export default function ExpenseForm({
 							valueAsNumber: true,
 						})}
 						id="expenseAmount"
-						placeholder="Expense amount..."
+						placeholder="Expense amount"
+						className="form-input"
+					/>
+				</div>
+
+				<div className="flex flex-col gap-1">
+					<div className="flex justify-between">
+						<label htmlFor="expensePayment">Paid with</label>
+						{errors.payment?.message && (
+							<span className="text-red-500 italic">
+								{errors.payment.message}
+							</span>
+						)}
+					</div>
+					<input
+						type="text"
+						{...register('payment', {
+							required: 'Payment can not be blank.',
+						})}
+						id="expensePayment"
+						placeholder="Paid with"
 						className="form-input"
 					/>
 				</div>
 				<div className="flex flex-col gap-1">
 					<div className="flex justify-between">
 						<label htmlFor="expenseAmount">Note</label>
-						{errors.amount?.message && (
-							<span className="text-red-500 italic">
-								{errors.amount.message}
-							</span>
+						{errors.note?.message && (
+							<span className="text-red-500 italic">{errors.note.message}</span>
 						)}
 					</div>
 					<textarea
