@@ -29,5 +29,7 @@ export type IncomeList = z.infer<typeof incomeSchema>;
 export interface LocalDb {
 	expenses: Expense[];
 	categories: string[];
+	merchant: string[];
+	payment: string[];
 	incomes: IncomeList[];
 }

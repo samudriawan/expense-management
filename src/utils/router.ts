@@ -20,8 +20,10 @@ export async function newExpenseAction({ request }: { request: Request }) {
 	const formData = await request.formData();
 	const newEntries = convertFormData(formData);
 	newEntries.id = crypto.randomUUID();
+	console.log('[x]new', newEntries);
 
-	const { expenses, categories, incomes } = getLocalStorage();
+	const { expenses, categories, merchant, payment, incomes } =
+		getLocalStorage();
 
 	const isCategoryExist = categories.find(
 		(value) => value === newEntries.category
@@ -29,16 +31,26 @@ export async function newExpenseAction({ request }: { request: Request }) {
 
 	if (!isCategoryExist) categories.push(newEntries.category as string);
 
+	const isMerchantExist = merchant.find(
+		(value) => value === newEntries.merchant
+	);
+
+	if (!isMerchantExist) merchant.push(newEntries.merchant as string);
+
+	const isPaymentExist = payment.find((value) => value === newEntries.payment);
+
+	if (!isPaymentExist) payment.push(newEntries.payment as string);
+
 	const parsed = expenseSchema.parse(newEntries);
 
 	expenses.push(parsed);
-	setLocalStorage({ expenses, categories, incomes });
+	setLocalStorage({ expenses, categories, merchant, payment, incomes });
 
 	return redirect('/');
 }
 
 export async function editExpenseLoader({ params }: LoaderArgs) {
-	const { expenses, categories, incomes } = getLocalStorage();
+	const { expenses } = getLocalStorage();
 	const expense = expenses.filter(
 		(item) => item.name === params.expenseName!.replace('-', ' ')
 	);
@@ -46,7 +58,9 @@ export async function editExpenseLoader({ params }: LoaderArgs) {
 
 	expense[0].createdAt = expense[0].createdAt.slice(0, 10);
 
-	return { categories: categories, expense: expense[0], incomes: incomes };
+	return {
+		expense: expense[0],
+	};
 }
 
 export async function editExpenseAction({ request }: { request: Request }) {
@@ -57,7 +71,8 @@ export async function editExpenseAction({ request }: { request: Request }) {
 	const actionType = formEntries['action'];
 	delete formEntries['action'];
 
-	const { expenses, ...others } = getLocalStorage();
+	const { expenses, categories, merchant, payment, ...others } =
+		getLocalStorage();
 
 	const isExpenseExist = expenses.findIndex(
 		(expense: Expense) => expense.id === formEntries.id
@@ -99,11 +114,23 @@ export async function editExpenseAction({ request }: { request: Request }) {
 
 			if (expenseNotChange.every((x) => x === true)) return redirect('/');
 
+			const isCategoryExist = categories.find(
+				(value) => value === formEntries.category
+			);
+
+			if (!isCategoryExist) categories.push(formEntries.category as string);
+
+			const isMerchantExist = merchant.find(
+				(value) => value === formEntries.merchant
+			);
+
+			if (!isMerchantExist) merchant.push(formEntries.merchant as string);
+
 			// merge the changes field
 			const updated = { ...findExpense, ...formEntries };
 
 			expenses[isExpenseExist] = updated;
-			const assemble = { expenses, ...others };
+			const assemble = { expenses, categories, merchant, payment, ...others };
 
 			setLocalStorage(assemble);
 			return redirect('/');
@@ -111,7 +138,7 @@ export async function editExpenseAction({ request }: { request: Request }) {
 
 		case 'delete': {
 			expenses.splice(isExpenseExist, 1);
-			const assemble = { expenses, ...others };
+			const assemble = { expenses, categories, merchant, payment, ...others };
 
 			setLocalStorage(assemble);
 			return redirect('/');
