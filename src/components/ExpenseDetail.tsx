@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useRouteLoaderData } from 'react-router-dom';
 import Filters from './filters';
 import SearchInput from './filters/SearchInput';
 import { BsFilter } from 'react-icons/bs';
 import { useFilterData } from '../hooks/useFilterData';
-import { Expense } from '../utils/schema';
+import { Expense, LocalDb } from '../utils/schema';
 
 export type SortOptionType = {
 	order: 'asc' | 'desc';
@@ -12,10 +12,7 @@ export type SortOptionType = {
 };
 
 export default function ExpenseDetail() {
-	const allData = useLoaderData() as {
-		categories: string[];
-		expenses: Expense[];
-	};
+	const allData = useRouteLoaderData('root') as LocalDb;
 	const [expensesData, setExpensesData] = useState<Expense[]>(
 		() => allData.expenses
 	);

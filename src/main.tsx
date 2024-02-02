@@ -15,14 +15,16 @@ import {
 } from './utils/router.ts';
 
 export const RouterPaths = {
-	expense: '/:expenseName/edit',
+	createExpense: '/create-expense',
+	editExpense: '/:expenseName/edit',
 } as const;
 
 const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <SharedLayout />,
-
+		id: 'root',
+		loader: AppLoader,
 		children: [
 			{
 				element: <Outlet />,
@@ -30,16 +32,14 @@ const router = createBrowserRouter([
 					{
 						index: true,
 						element: <App />,
-						loader: AppLoader,
 					},
 					{
-						path: '/create-expense',
+						path: RouterPaths.createExpense,
 						element: <NewExpense />,
-						loader: AppLoader,
 						action: newExpenseAction,
 					},
 					{
-						path: RouterPaths.expense,
+						path: RouterPaths.editExpense,
 						element: <EditExpense />,
 						loader: editExpenseLoader,
 						action: editExpenseAction,

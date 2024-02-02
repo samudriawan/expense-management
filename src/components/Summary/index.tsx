@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useRouteLoaderData } from 'react-router-dom';
 import { useMonthPeriod } from '../../context/MonthPeriodContext';
 import Card, { CardHeader } from './Card';
 import { Expense, IncomeList } from '../../utils/schema';
@@ -23,7 +23,7 @@ export default function MonthSummary() {
 	const [incomeAmount, setIncomeAmount] = useState(0);
 	const [expenseAmount, setExpenseAmount] = useState(0);
 	const [monthList, setMonthList] = useState<string[]>([]);
-	const expensesData = useLoaderData() as {
+	const expensesData = useRouteLoaderData('root') as {
 		categories: string[];
 		expenses: Expense[];
 		incomes: IncomeList[];
@@ -78,9 +78,6 @@ export default function MonthSummary() {
 	return (
 		<section className="block mb-4">
 			<div className="flex items-center mb-4">
-				{/* <h2 className="text-2xl me-2" data-testid="header">
-					Periode:{' '}
-				</h2> */}
 				<select
 					name="monthYearList"
 					id="monthYearList"

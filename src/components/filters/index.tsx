@@ -1,8 +1,7 @@
-import { Expense } from '../../utils/schema';
 import { SortOptionType } from '../ExpenseDetail';
 import FilterColumn from './FilterColumn';
 import SortColumn from './SortColumn';
-import { useLoaderData } from 'react-router-dom';
+import { useRouteLoaderData } from 'react-router-dom';
 
 type Props = {
 	isFilterOpen: boolean;
@@ -19,9 +18,8 @@ export default function Filters({
 	sortOption,
 	setSortOption,
 }: Props) {
-	const { categories } = useLoaderData() as {
+	const { categories } = useRouteLoaderData('root') as {
 		categories: string[];
-		expenses: Expense[];
 	};
 
 	return (

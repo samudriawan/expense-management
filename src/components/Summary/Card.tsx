@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useRouteLoaderData } from 'react-router-dom';
 import { useMonthPeriod } from '../../context/MonthPeriodContext';
-import { Expense, IncomeList } from '../../utils/schema';
+import { LocalDb } from '../../utils/schema';
 import { setLocalStorage } from '../../utils/localApi';
 
 export enum CardHeader {
@@ -21,11 +21,8 @@ export default function Card({
 }) {
 	const [editIncome, setEditIncome] = useState(false);
 	const { monthSelected } = useMonthPeriod();
-	const { expenses, categories, incomes } = useLoaderData() as {
-		categories: string[];
-		expenses: Expense[];
-		incomes: IncomeList[];
-	};
+	const loaderData = useRouteLoaderData('root') as LocalDb;
+	const { incomes } = loaderData;
 
 	useEffect(() => {
 		setEditIncome(false);
@@ -43,7 +40,7 @@ export default function Card({
 				amount: amount,
 				month: monthSelected,
 			});
-			setLocalStorage({ expenses, categories, incomes });
+			setLocalStorage(loaderData);
 			return;
 		}
 
@@ -56,7 +53,7 @@ export default function Card({
 		incomes[indexIncome].updatedAt = new Date().toISOString();
 		incomes[indexIncome].amount = amount;
 
-		setLocalStorage({ expenses, categories, incomes });
+		setLocalStorage(loaderData);
 	}
 
 	return (
