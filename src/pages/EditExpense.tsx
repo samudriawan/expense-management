@@ -3,6 +3,7 @@ import { SubmitHandler } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Expense } from '../utils/schema';
 import ExpenseForm from '../components/ExpenseForm';
+import { FaArrowLeftLong } from 'react-icons/fa6';
 
 export default function EditExpense() {
 	const { expense } = useLoaderData() as {
@@ -25,8 +26,10 @@ export default function EditExpense() {
 
 	return (
 		<>
-			<Link to="/" className="btn-primary my-2">
-				Back
+			<Link to="/" className="btn-primary my-2" data-testid="income-back-link">
+				<span className="flex items-center gap-2">
+					<FaArrowLeftLong /> Back
+				</span>
 			</Link>
 
 			<ExpenseForm
