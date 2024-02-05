@@ -70,7 +70,7 @@ function DropdownInput({
 						setIsOpen(true);
 						setSearchValue(e.target.value);
 					}}
-					placeholder={`Select ${name}`}
+					placeholder={`Type to seach or create a new ${name}`}
 					className="form-input"
 					onFocus={() => setIsOpen(true)}
 					onKeyDown={(e) => {
@@ -118,7 +118,7 @@ function DropdownInput({
 			</div>
 			<div
 				ref={dropdownContentRef}
-				className={`absolute w-full p-2 mt-2 rounded bg-neutral-800 border border-neutral-500 ${
+				className={`absolute w-full p-2 mt-2 rounded bg-neutral-800 border border-neutral-500 z-10 ${
 					isOpen ? 'block' : 'hidden'
 				}`}
 			>
