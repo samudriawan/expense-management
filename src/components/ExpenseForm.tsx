@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Expense } from '../utils/schema';
+import { Expense, LocalDb } from '../utils/schema';
+import DropdownInput from './DropdownInput';
+import { useRouteLoaderData } from 'react-router-dom';
 
 type FormProps = {
 	defaultValues?: Expense;
-	categoryList: string[];
 	type: 'create' | 'edit';
 	onSubmit: SubmitHandler<Expense>;
 	onDelete?: SubmitHandler<Expense>;
@@ -12,12 +13,14 @@ type FormProps = {
 
 export default function ExpenseForm({
 	defaultValues,
-	categoryList,
 	type,
 	onSubmit,
 	onDelete,
 }: FormProps) {
-	const [categories, setCategories] = useState<string[]>([]);
+	const { categories: kategori, merchant } = useRouteLoaderData(
+		'root'
+	) as LocalDb;
+	const [categories, setCategories] = useState<string[]>(() => kategori);
 	const [newCategory, setNewCategory] = useState('');
 	const [isInputCategoryActive, setIsInputCategoryActive] = useState(false);
 	const [showModal, setShowModal] = useState(false);
@@ -27,14 +30,9 @@ export default function ExpenseForm({
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<Expense>({ defaultValues: defaultValues });
-
-	useEffect(() => {
-		const filterCategories = categoryList.filter(
-			(item) => item !== 'no category'
-		);
-		setCategories(Array.from(new Set(filterCategories)));
-	}, [categoryList]);
+		reset,
+		setValue,
+	} = useForm<Expense>();
 
 	useEffect(() => {
 		const handleClickOutsideModal = (event: Event) => {
@@ -43,6 +41,7 @@ export default function ExpenseForm({
 				confirmModalRef.current &&
 				!confirmModalRef.current?.contains(target)
 			) {
+				unlockScroll();
 				setShowModal(false);
 			}
 		};
@@ -53,6 +52,21 @@ export default function ExpenseForm({
 			document.removeEventListener('click', handleClickOutsideModal, true);
 		};
 	}, [setShowModal]);
+
+	useEffect(() => {
+		if (defaultValues) reset(defaultValues);
+	}, [defaultValues]);
+
+	const lockScroll = () => {
+		const scrollBarCompensation = window.innerWidth - document.body.offsetWidth;
+		document.body.style.overflow = 'hidden';
+		document.body.style.paddingRight = scrollBarCompensation + 'px';
+	};
+
+	const unlockScroll = () => {
+		document.body.style.overflow = '';
+		document.body.style.paddingRight = '0px';
+	};
 
 	return (
 		<>
@@ -98,6 +112,7 @@ export default function ExpenseForm({
 						})}
 						placeholder="Name of expenses"
 						className="form-input"
+						autoFocus
 					/>
 				</div>
 				<div className="flex flex-col gap-2">
@@ -168,12 +183,13 @@ export default function ExpenseForm({
 							</span>
 						)}
 					</div>
-					<input
-						type="text"
-						{...register('merchant')}
-						id="expenseMerchant"
-						placeholder="Type to add merchant"
-						className="form-input"
+					<DropdownInput
+						key={'merchantDropdown'}
+						register={register}
+						setValue={setValue}
+						name="merchant"
+						defaultValue={defaultValues?.merchant}
+						dropdownDataList={merchant}
 					/>
 				</div>
 
@@ -207,16 +223,23 @@ export default function ExpenseForm({
 							</span>
 						)}
 					</div>
-					<input
-						type="text"
-						{...register('payment', {
-							required: 'Payment can not be blank.',
-						})}
+					<select
+						{...register('payment')}
 						id="expensePayment"
-						placeholder="Paid with"
-						className="form-input"
-					/>
+						className="h-8 px-4 rounded-lg "
+						defaultValue={defaultValues?.payment || ''}
+					>
+						<option value="" disabled>
+							Select payment
+						</option>
+						{['Cash', 'Credit'].map((item, index) => (
+							<option key={index} value={item}>
+								{item}
+							</option>
+						))}
+					</select>
 				</div>
+
 				<div className="flex flex-col gap-1">
 					<div className="flex justify-between">
 						<label htmlFor="expenseAmount">Note</label>
@@ -245,6 +268,7 @@ export default function ExpenseForm({
 						type="button"
 						onClick={() => {
 							setShowModal(true);
+							lockScroll();
 						}}
 						className="btn-primary w-full bg-transparent text-red-600 border-red-600 hover:bg-red-400 hover:bg-opacity-5 hover:text-red-600 hover:border-red-600"
 					>
@@ -253,11 +277,12 @@ export default function ExpenseForm({
 				)}
 			</div>
 
+			{/* Modal section */}
 			<div
 				className={
 					`${
 						showModal
-							? 'absolute inset-0 flex justify-center items-center'
+							? 'fixed inset-0 flex justify-center items-center'
 							: 'hidden'
 					}` + ' text-center bg-[rgba(0,0,0,0.5)]'
 				}
@@ -267,18 +292,24 @@ export default function ExpenseForm({
 					className="relative px-2 md:px-8 py-4 md:py-8 -translate-y-10 bg-neutral-800 rounded-md"
 				>
 					<p className="text-lg">Are you sure want to delete this record?</p>
-					<div className=""></div>
 					<div className="flex justify-end items-center gap-2 mt-4">
 						<button
 							type="button"
 							className="btn-danger"
-							onClick={onDelete && handleSubmit(onDelete)}
+							onClick={() => {
+								handleSubmit(onDelete!)();
+								unlockScroll();
+								setShowModal(false);
+							}}
 						>
 							Delete
 						</button>
 						<button
 							type="button"
-							onClick={() => setShowModal(false)}
+							onClick={() => {
+								unlockScroll();
+								setShowModal(false);
+							}}
 							className="btn-primary"
 						>
 							Cancel

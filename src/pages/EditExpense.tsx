@@ -5,22 +5,21 @@ import { Expense } from '../utils/schema';
 import ExpenseForm from '../components/ExpenseForm';
 
 export default function EditExpense() {
-	const { expense, categories } = useLoaderData() as {
+	const { expense } = useLoaderData() as {
 		categories: string[];
 		expense: Expense;
 	};
 	const routerSubmit = useSubmit();
-	console.log(expense);
 
 	const onSubmit: SubmitHandler<Expense> = (data) => {
 		const addAction = { ...data, action: 'save' };
-		console.log('[x]onsubmit ', addAction);
+		// console.log('[x]onsubmit ', addAction);
 		routerSubmit(addAction, { method: 'post' });
 	};
 
 	const onDelete: SubmitHandler<Expense> = (data) => {
 		const addAction = { ...data, action: 'delete' };
-		console.log('[x]ondelete ', addAction);
+		// console.log('[x]ondelete ', addAction);
 		routerSubmit(addAction, { method: 'post' });
 	};
 
@@ -33,7 +32,6 @@ export default function EditExpense() {
 			<ExpenseForm
 				type="edit"
 				defaultValues={expense}
-				categoryList={categories}
 				onSubmit={onSubmit}
 				onDelete={onDelete}
 			/>

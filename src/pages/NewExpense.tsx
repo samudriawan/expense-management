@@ -1,18 +1,13 @@
-import { Link, useLoaderData, useSubmit } from 'react-router-dom';
+import { Link, useSubmit } from 'react-router-dom';
 import { SubmitHandler } from 'react-hook-form';
 import { Expense } from '../utils/schema';
 import ExpenseForm from '../components/ExpenseForm';
 import { FaArrowLeftLong } from 'react-icons/fa6';
 
 export default function NewExpense() {
-	const expensesData = useLoaderData() as {
-		categories: string[];
-		expenses: Expense[];
-	};
 	const routerSubmit = useSubmit();
 
 	const onSubmit: SubmitHandler<Expense> = (data) => {
-		// console.log(data);
 		routerSubmit(data, { method: 'post' });
 	};
 
@@ -24,11 +19,7 @@ export default function NewExpense() {
 				</span>
 			</Link>
 
-			<ExpenseForm
-				categoryList={expensesData.categories}
-				type="create"
-				onSubmit={onSubmit}
-			/>
+			<ExpenseForm type="create" onSubmit={onSubmit} />
 		</>
 	);
 }
