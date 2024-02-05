@@ -77,7 +77,7 @@ export async function editExpenseAction({ request }: { request: Request }) {
 		(expense: Expense) => expense.id === formEntries.id
 	);
 
-	if (!isExpenseExist) {
+	if (isExpenseExist === -1) {
 		console.log('[x]expenses not exist', isExpenseExist);
 		throw new Error('Expense not found.');
 	}
