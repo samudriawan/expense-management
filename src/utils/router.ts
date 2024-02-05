@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 
 interface LoaderArgs extends ActionFunctionArgs {
-	params: Params<ParamParseKey<typeof RouterPaths.expense>>;
+	params: Params<ParamParseKey<typeof RouterPaths.editExpense>>;
 }
 
 export async function AppLoader() {
@@ -20,7 +20,6 @@ export async function newExpenseAction({ request }: { request: Request }) {
 	const formData = await request.formData();
 	const newEntries = convertFormData(formData);
 	newEntries.id = crypto.randomUUID();
-	console.log('[x]new', newEntries);
 
 	const { expenses, categories, merchant, payment, incomes } =
 		getLocalStorage();
