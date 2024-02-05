@@ -20,9 +20,7 @@ export default function ExpenseForm({
 	const { categories: kategori, merchant } = useRouteLoaderData(
 		'root'
 	) as LocalDb;
-	const [categories, setCategories] = useState<string[]>(() => kategori);
-	const [newCategory, setNewCategory] = useState('');
-	const [isInputCategoryActive, setIsInputCategoryActive] = useState(false);
+	const [categories] = useState<string[]>(() => kategori);
 	const [showModal, setShowModal] = useState(false);
 	const confirmModalRef = useRef<HTMLDivElement>(null);
 
@@ -112,7 +110,7 @@ export default function ExpenseForm({
 						})}
 						placeholder="Name of expenses"
 						className="form-input"
-						autoFocus
+						autoFocus={type === 'create' ? true : false}
 					/>
 				</div>
 				<div className="flex flex-col gap-2">
@@ -124,54 +122,14 @@ export default function ExpenseForm({
 							</span>
 						)}
 					</div>
-					<select
-						{...register('category')}
-						id="expenseCategory"
-						className="h-8 px-4 rounded-lg"
-					>
-						<option value="no category">no category</option>
-						{categories.map((cat, index) => (
-							<option key={index} value={cat}>
-								{cat}
-							</option>
-						))}
-					</select>
-
-					{/* ---
-							input field for creating new category
-							---
-					 */}
-					<div className="mt-2 flex">
-						<input
-							type="text"
-							id="createCategory"
-							placeholder="Type new category"
-							value={newCategory}
-							onChange={(e) => setNewCategory(e.currentTarget.value)}
-							className="form-input rounded-e-none border-r-0"
-							// when Enter key is press while this input is on focus, do not submit the Form
-							onFocus={() => setIsInputCategoryActive(true)}
-							onBlur={() => setIsInputCategoryActive(false)}
-							onKeyDown={(e) => {
-								if (e.key === 'Enter') {
-									if (!e.currentTarget.value) return;
-									setCategories((prev) => [...prev, newCategory.trim()]);
-									setNewCategory('');
-								}
-							}}
-						/>
-						<button
-							type="button"
-							className="btn-primary w-6/12 py-0 px-2 rounded-s-none"
-							onClick={() => {
-								if (!newCategory) return;
-								setCategories((prev) => [...prev, newCategory.trim()]);
-								setNewCategory('');
-							}}
-						>
-							Add Category
-						</button>
-					</div>
+					<DropdownInput
+						key={'categoryDropdown'}
+						register={register}
+						setValue={setValue}
+						name="category"
+						defaultValue={defaultValues?.category}
+						dropdownDataList={categories}
+					/>
 				</div>
 
 				<div className="flex flex-col gap-1">
@@ -224,7 +182,9 @@ export default function ExpenseForm({
 						)}
 					</div>
 					<select
-						{...register('payment')}
+						{...register('payment', {
+							required: 'Please select payment method.',
+						})}
 						id="expensePayment"
 						className="h-8 px-4 rounded-lg "
 						defaultValue={defaultValues?.payment || ''}
@@ -258,7 +218,7 @@ export default function ExpenseForm({
 
 			<div className="flex justify-between gap-2 my-3">
 				<input
-					type={isInputCategoryActive ? 'button' : 'submit'}
+					type="submit"
 					value="Save"
 					onClick={handleSubmit(onSubmit)}
 					className="btn-primary w-full py-2"
