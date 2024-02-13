@@ -76,7 +76,7 @@ export default function ExpenseDetail() {
 
 			{/* expenses table */}
 			<div className="pb-2 overflow-x-auto">
-				<table className="table border-collapse border border-neutral-700 whitespace-nowrap table-fixed w-full">
+				<table className="table border-collapse border border-neutral-700 whitespace-nowrap w-full">
 					<thead>
 						<tr className="h-9">
 							<th className="border border-neutral-500">Date</th>
