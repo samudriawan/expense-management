@@ -79,10 +79,12 @@ export default function ExpenseDetail() {
 				<table className="table border-collapse border border-neutral-700 whitespace-nowrap w-full">
 					<thead>
 						<tr className="h-9">
-							<th className="border border-neutral-500">Date</th>
-							<th className="border border-neutral-500">Name</th>
-							<th className="border border-neutral-500">Category</th>
-							<th className="border border-neutral-500">Amount</th>
+							<th className="border px-2 border-neutral-500">Date</th>
+							<th className="border px-2 border-neutral-500">Name</th>
+							<th className="border px-2 border-neutral-500">Category</th>
+							<th className="border px-2 border-neutral-500">Payment</th>
+							<th className="border px-2 border-neutral-500">Merchant</th>
+							<th className="border px-2 border-neutral-500">Amount</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -94,8 +96,9 @@ export default function ExpenseDetail() {
 									navigate(`/${expense.name.replace(' ', '-')}/edit`)
 								}
 							>
+								{}
 								<td
-									className="px-0 border border-neutral-500"
+									className="px-2 border border-neutral-500"
 									title={new Date(expense.createdAt).toLocaleDateString(
 										'us-US',
 										{
@@ -120,10 +123,22 @@ export default function ExpenseDetail() {
 									</Link>
 								</td>
 								<td
-									className="px-0 border border-neutral-500"
+									className="px-2 border border-neutral-500"
 									title={expense.category}
 								>
 									{expense.category}
+								</td>
+								<td
+									className="px-2 border border-neutral-500"
+									title={expense.payment}
+								>
+									{expense.payment}
+								</td>
+								<td
+									className="px-2 border border-neutral-500"
+									title={expense.merchant || ''}
+								>
+									{expense.merchant}
 								</td>
 								<td
 									className="px-2 border border-neutral-500 truncate"
@@ -145,7 +160,7 @@ export default function ExpenseDetail() {
 							<td className="border border-neutral-500 ">
 								{filterExpenses.length} items
 							</td>
-							<td colSpan={2} className="font-bold border border-neutral-500 ">
+							<td colSpan={4} className="font-bold border border-neutral-500 ">
 								sub total
 							</td>
 							<td className="font-bold border border-neutral-500 truncate">
