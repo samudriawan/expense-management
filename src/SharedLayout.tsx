@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, ScrollRestoration } from 'react-router-dom';
 
 export default function SharedLayout() {
 	return (
@@ -12,7 +12,8 @@ export default function SharedLayout() {
 					</Link>
 				</nav>
 			</div>
-			<main className="bg-neutral-900 md:w-full mx-auto py-6">
+			<main className="bg-neutral-900 md:w-full mx-auto">
+				<ScrollRestoration />
 				<section className="main-content">
 					<Outlet />
 				</section>
