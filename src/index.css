@@ -55,7 +55,7 @@ body {
 		@apply block w-fit bg-transparent hover:bg-[rgba(0,0,0,0.2)] text-red-600 font-semibold py-1 px-4 border border-red-600  rounded transition-all cursor-pointer;
 	}
 	.form-input {
-		@apply bg-transparent appearance-none border-b-2 border-neutral-700 w-full p-2 text-white leading-tight focus:outline-none focus:bg-neutral-800 focus:border-[#035bff];
+		@apply bg-transparent appearance-none border-b-2 border-neutral-700 w-full p-2 text-white leading-tight focus:outline-none focus:bg-neutral-800 focus:border-[#035bff] md:border-[1px] md:rounded-md md:focus:bg-transparent;
 	}
 	.select-input {
 		@apply h-8 px-4 rounded-lg cursor-pointer transition-colors;
@@ -65,5 +65,3 @@ body {
 		@apply px-4 py-10 pt-16;
 	}
 }
-
-/* #1F51FF #4D4DFF  #04d9ff */
