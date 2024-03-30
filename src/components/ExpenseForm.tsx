@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Expense, LocalDb } from '../utils/schema';
 import DropdownInput from './DropdownInput';
 import { useRouteLoaderData } from 'react-router-dom';
+import { useClickOutsideClose } from '../hooks/useClickOutsideClose';
 
 type FormProps = {
 	defaultValues?: Expense;
@@ -22,7 +23,11 @@ export default function ExpenseForm({
 	) as LocalDb;
 	const [categories] = useState<string[]>(() => kategori);
 	const [showModal, setShowModal] = useState(false);
-	const confirmModalRef = useRef<HTMLDivElement>(null);
+
+	const { containerDivRef: confirmModalRef } = useClickOutsideClose({
+		setOpenState: setShowModal,
+		unlockScroll: unlockScroll,
+	});
 
 	const {
 		register,
@@ -33,38 +38,19 @@ export default function ExpenseForm({
 	} = useForm<Expense>();
 
 	useEffect(() => {
-		const handleClickOutsideModal = (event: Event) => {
-			const target = event.target as Element;
-			if (
-				confirmModalRef.current &&
-				!confirmModalRef.current?.contains(target)
-			) {
-				unlockScroll();
-				setShowModal(false);
-			}
-		};
-
-		document.addEventListener('click', handleClickOutsideModal, true);
-
-		return () => {
-			document.removeEventListener('click', handleClickOutsideModal, true);
-		};
-	}, [setShowModal]);
-
-	useEffect(() => {
 		if (defaultValues) reset(defaultValues);
 	}, [defaultValues]);
 
-	const lockScroll = () => {
+	function lockScroll() {
 		const scrollBarCompensation = window.innerWidth - document.body.offsetWidth;
 		document.body.style.overflow = 'hidden';
 		document.body.style.paddingRight = scrollBarCompensation + 'px';
-	};
+	}
 
-	const unlockScroll = () => {
+	function unlockScroll() {
 		document.body.style.overflow = '';
 		document.body.style.paddingRight = '0px';
-	};
+	}
 
 	return (
 		<>
