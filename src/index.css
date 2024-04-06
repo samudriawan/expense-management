@@ -64,4 +64,7 @@ body {
 	.main-content {
 		@apply px-4 py-10 pt-16;
 	}
+	.active-link {
+		@apply font-bold bg-neutral-800 after:absolute after:inset-0 after:top-1.5 after:w-1 after:h-[21.6px] after:-translate-x-2 after:rounded-md after:bg-blue-700;
+	}
 }

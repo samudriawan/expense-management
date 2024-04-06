@@ -148,12 +148,172 @@ export async function editExpenseAction({ request }: { request: Request }) {
 	}
 }
 
-export function convertFormData(data: FormData) {
-	const formEntries = Object.fromEntries(data);
-	const result: {
+export async function settingsLoader() {
+	const { expenses, categories, payment, merchant, incomes } =
+		getLocalStorage();
+
+	return { expenses, categories, payment, merchant, incomes };
+}
+
+export async function settingsAction({ request }: { request: Request }) {
+	const formData = await request.formData();
+	const formEntries = convertFormData<{
+		data: string;
+		index?: number;
+		action?: string;
+		callback: string;
+	}>(formData);
+
+	// get what button action was clicked and remove from formData
+	const actionType = formEntries['action'];
+	delete formEntries['action'];
+
+	const { categories, expenses, merchant, ...others } = getLocalStorage();
+
+	switch (actionType) {
+		// categories repositories
+		case 'create_category': {
+			if (categories.includes(formEntries.data)) {
+				return { error: `Category "${formEntries.data}" already exists.` };
+			}
+			categories.push(formEntries.data);
+
+			setLocalStorage({ categories, expenses, merchant, ...others });
+			return redirect(formEntries.callback);
+		}
+
+		case 'edit_category': {
+			const parsedCategories: string[] = JSON.parse(formEntries.data);
+			const changedValue = parsedCategories.filter(
+				(item) => !categories.includes(item)
+			);
+			const changedValueIndex = categories.findIndex(
+				(item) =>
+					item ===
+					categories.filter((item) => !parsedCategories.includes(item))[0]
+			);
+			const newCategories = [...categories].map((item, i) =>
+				i === changedValueIndex ? changedValue[0] : item
+			);
+
+			setLocalStorage({
+				categories: newCategories,
+				expenses,
+				merchant,
+				...others,
+			});
+			return redirect(formEntries.callback);
+		}
+
+		case 'delete_category': {
+			const associatedCategory = Array.from(
+				new Set(expenses.map((item) => item.category))
+			);
+			const deletedValue = categories[formEntries.index!];
+
+			if (associatedCategory.includes(deletedValue)) {
+				return {
+					error: 'Cannot delete category that has associated in expense.',
+				};
+			}
+
+			const filteredCategories: string[] = JSON.parse(formEntries.data);
+
+			if (filteredCategories.length <= 0) {
+				setLocalStorage({ categories: [], expenses, merchant, ...others });
+				return redirect(formEntries.callback);
+			}
+
+			setLocalStorage({
+				categories: [...categories].filter(
+					(_, index) =>
+						index !== categories.findIndex((item) => item === deletedValue)
+				),
+				expenses,
+				merchant,
+				...others,
+			});
+			return redirect(formEntries.callback);
+		}
+
+		// merchants repositories
+		case 'create_merchant': {
+			if (merchant.includes(formEntries.data)) {
+				return { error: `Merchant "${formEntries.data}" already exists.` };
+			}
+			merchant.push(formEntries.data);
+
+			setLocalStorage({ categories, expenses, merchant, ...others });
+			return redirect(formEntries.callback);
+		}
+
+		case 'edit_merchant': {
+			const parsedMerchants: string[] = JSON.parse(formEntries.data);
+			const changedValue = parsedMerchants.filter(
+				(item) => !merchant.includes(item)
+			);
+			const changedValueIndex = merchant.findIndex(
+				(item) =>
+					item === merchant.filter((item) => !parsedMerchants.includes(item))[0]
+			);
+			const newMerchants = [...merchant].map((item, i) =>
+				i === changedValueIndex ? changedValue[0] : item
+			);
+
+			setLocalStorage({
+				categories,
+				expenses,
+				merchant: newMerchants,
+				...others,
+			});
+			return redirect(formEntries.callback);
+		}
+
+		case 'delete_merchant': {
+			const associatedMerchant = Array.from(
+				new Set(expenses.map((item) => item.merchant))
+			);
+			const deletedValue = merchant[formEntries.index!];
+
+			if (associatedMerchant.includes(deletedValue)) {
+				return {
+					error: 'Cannot delete merchant that has associated in expense.',
+				};
+			}
+
+			const filteredMerchant: string[] = JSON.parse(formEntries.data);
+
+			if (filteredMerchant.length <= 0) {
+				setLocalStorage({ categories, merchant: [], expenses, ...others });
+				return redirect(formEntries.callback);
+			}
+
+			setLocalStorage({
+				merchant: [...merchant].filter(
+					(_, index) =>
+						index !== merchant.findIndex((item) => item === deletedValue)
+				),
+				expenses,
+				categories,
+				...others,
+			});
+			return redirect(formEntries.callback);
+		}
+
+		default:
+			console.log('Action not recognized.');
+			throw new Response('Action not recognized.', { status: 500 });
+	}
+}
+
+export function convertFormData<
+	T = {
 		[k: string]: string | number;
-	} = JSON.parse(JSON.stringify(formEntries), (key, value) =>
-		key === 'amount' ? +value : value
+	}
+>(data: FormData): T {
+	const formEntries = Object.fromEntries(data);
+	const result: T = JSON.parse(JSON.stringify(formEntries), (key, value) =>
+		key === 'amount' || key === 'index' ? +value : value
 	);
 	return result;
 }

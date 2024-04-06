@@ -1,4 +1,5 @@
 import { Link, Outlet, ScrollRestoration } from 'react-router-dom';
+import { BsGear } from 'react-icons/bs';
 
 export default function SharedLayout() {
 	return (
@@ -9,6 +10,12 @@ export default function SharedLayout() {
 						<h1 className="text-lg font-bold" data-testid="nav-logo">
 							Expense
 						</h1>
+					</Link>
+					<Link
+						to="/settings"
+						className="flex items-center justify-center ms-auto px-1"
+					>
+						<BsGear size="1.2rem" />
 					</Link>
 				</nav>
 			</div>
