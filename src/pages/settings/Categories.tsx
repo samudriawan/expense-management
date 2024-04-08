@@ -73,7 +73,10 @@ export default function Categories() {
 			return;
 		}
 
-		setErrorMsg(`Category "${data.category}" already exists.`);
+		if (!data.category) setErrorMsg(`Category name cannot be blank.`);
+
+		if (categories.includes(data.category))
+			setErrorMsg(`Category "${data.category}" already exists.`);
 	};
 
 	const onDelete: SubmitHandler<FormCategoryValues> = (data) => {

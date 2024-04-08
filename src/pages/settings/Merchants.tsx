@@ -76,7 +76,10 @@ export default function Merchants() {
 			return;
 		}
 
-		setErrorMsg(`Category "${data.merchant}" already exists.`);
+		if (!data.merchant) setErrorMsg(`Merchant name cannot be blank.`);
+
+		if (merchant.includes(data.merchant))
+			setErrorMsg(`Merchant "${data.merchant}" already exists.`);
 	};
 
 	const onDelete: SubmitHandler<FormMerchantValues> = (data) => {
