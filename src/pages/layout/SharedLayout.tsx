@@ -12,7 +12,7 @@ export default function SharedLayout() {
 						</h1>
 					</Link>
 					<Link
-						to="/settings"
+						to="/settings/categories"
 						className="flex items-center justify-center ms-auto px-1"
 					>
 						<BsGear size="1.2rem" />

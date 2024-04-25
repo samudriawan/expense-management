@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import SharedLayout from './SharedLayout.tsx';
+import SharedLayout from './pages/layout/SharedLayout.tsx';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import NewExpense from './pages/NewExpense.tsx';
 import EditExpense from './pages/EditExpense.tsx';
@@ -15,7 +15,7 @@ import {
 	settingsAction,
 	settingsLoader,
 } from './utils/router.ts';
-import SettingsLayout from './SettingsLayout.tsx';
+import SettingsLayout from './pages/layout/SettingsLayout.tsx';
 import Merchants from './pages/settings/Merchants.tsx';
 import Categories from './pages/settings/Categories.tsx';
 
